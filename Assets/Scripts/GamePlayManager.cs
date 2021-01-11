@@ -27,11 +27,11 @@ public class GamePlayManager : MonoBehaviour
         }
     }
 
-    public void HandleFruitSelected(GameObject go)
+    public void HandleFruitSelected(GameObject justClickedFruit)
     {
         if (!swappingInProgress)
         {
-            if (go == selectedFruit)
+            if (justClickedFruit == selectedFruit)
             {
                 SetSelection(selectedFruit, false);
                 selectedFruit = null;
@@ -40,16 +40,16 @@ public class GamePlayManager : MonoBehaviour
             {
                 if (!selectedFruit)
                 {
-                    selectedFruit = go;
+                    selectedFruit = justClickedFruit;
                     SetSelection(selectedFruit, true);
                 }
                 else
                 {
                     // check if new selection is a neighbor
-                    if (gGrid.IsNeighbor(selectedFruit.GetComponent<Fruit>().GetFruitNode(), go.GetComponent<Fruit>().GetFruitNode()))
+                    if (gGrid.IsNeighbor(selectedFruit, justClickedFruit))
                     {
                         lastSelectedFruit = selectedFruit;
-                        selectedFruit = go;
+                        selectedFruit = justClickedFruit;
                         SetSelection(selectedFruit, true);
 
                         selectedPos = selectedFruit.transform.position;
@@ -61,7 +61,7 @@ public class GamePlayManager : MonoBehaviour
                     else
                     {
                         SetSelection(selectedFruit, false);
-                        selectedFruit = go;
+                        selectedFruit = justClickedFruit;
                         SetSelection(selectedFruit, true);
                     }
 

@@ -9,7 +9,7 @@ public class GameGrid : MonoBehaviour
     [SerializeField] Vector3 gridBottomLeftPos;
     [SerializeField] List<GameObject> fruitList;
 
-    Node[,] grid;
+    GameObject[,] grid;
 
     float nodeDiameter;
     int gridSizeX, gridSizeY;
@@ -29,7 +29,7 @@ public class GameGrid : MonoBehaviour
 
     private void CreateGrid()
     {
-        grid = new Node[gridSizeX, gridSizeY];
+        grid = new GameObject[gridSizeX, gridSizeY];
 
         for(int x = 0; x < gridSizeX; x++)
         {
@@ -45,25 +45,34 @@ public class GameGrid : MonoBehaviour
 
                 // Instantiate fruit
                 GameObject fruitGameObject = Instantiate(prefab, worldPoint, Quaternion.identity);
-                Fruit fruit = fruitGameObject.GetComponent<Fruit>();
                 
-                // create Node for new fruit
-                Node fruitNode = new Node(fruit.GetFruitType(), fruitGameObject);
-
                 // save it to the grid
-                grid[x, y] = fruitNode;
-                // add it to the gameObject
-                fruit.SetFruitNode(fruitNode);
-
+                grid[x, y] = fruitGameObject;
             }
         }        
     }
 
-    public bool IsNeighbor(Node nodeOne, Node nodeTwo)
+    public List<GameObject> FindMatch(GameObject go, Vector2 direction)
     {
-        GetNodePositionFromWorldPoint(nodeOne.GetPosision(), out int nodeOneX, out int nodeOneY);
-        GetNodePositionFromWorldPoint(nodeTwo.GetPosision(), out int nodeTwoX, out int nodeTwoY);
+        List<GameObject> matchingFruits = new List<GameObject>();
 
+        if (direction == Vector2.up || direction == Vector2.down)
+        {
+            // TODO
+        }
+        else if (direction == Vector2.left || direction == Vector2.right)
+        {
+            // TODO
+        }
+
+        return matchingFruits;
+    }
+
+    public bool IsNeighbor(GameObject goOne, GameObject goTwo)
+    {
+        GetGameObjectGridPos(goOne, out int nodeOneX, out int nodeOneY);
+        GetGameObjectGridPos(goTwo, out int nodeTwoX, out int nodeTwoY);
+        
         for (int x = -1; x <= 1; x++)
         {
             for (int y = -1; y <= 1; y++)
@@ -101,14 +110,19 @@ public class GameGrid : MonoBehaviour
     }
 
 
-    public Node GetNodeFromWorldPoint(Vector3 worldPosition)
+    public GameObject GetGameObjectFromWorldPoint(Vector3 worldPosition)
     {
-        GetNodePositionFromWorldPoint(worldPosition, out int x, out int y);
+        GetGameObjectGridPos(worldPosition, out int x, out int y);
 
         return grid[x,y];
     }
 
-    public void GetNodePositionFromWorldPoint(Vector3 worldPosition, out int x, out int y)
+    public void GetGameObjectGridPos(GameObject go, out int x, out int y)
+    {
+        GetGameObjectGridPos(go.transform.position, out x, out y);
+    }
+
+    public void GetGameObjectGridPos(Vector3 worldPosition, out int x, out int y)
     {
         x = Mathf.Clamp(
                 Mathf.RoundToInt(Mathf.Clamp(worldPosition.x - nodeRadius, 0, gridWorldSize.x) / nodeDiameter),

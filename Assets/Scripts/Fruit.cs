@@ -12,20 +12,10 @@ public class Fruit : MonoBehaviour
     }
 
     [SerializeField] Type fruitType;
-    private Node fruitNode;
 
     public Type GetFruitType()
     {
         return fruitType;
     }
 
-    public void SetFruitNode(Node n)
-    {
-        fruitNode = n;
-    }
-
-    public Node GetFruitNode()
-    {
-        return fruitNode;
-    }
 }
