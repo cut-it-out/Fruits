@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +11,7 @@ public class GamePlayManager : MonoBehaviour
     private GameObject selectedFruit, lastSelectedFruit;
     private Vector3 selectedPos, lastSelectedPos;
     private bool swappingInProgress = false;
+    private bool matchFound = false;
 
     // cached 
     private GameGrid gGrid;
@@ -23,7 +25,7 @@ public class GamePlayManager : MonoBehaviour
     {
         if (swappingInProgress)
         {
-            SwapTwoFruits();
+            HandleFruitSwap();
         }
     }
 
@@ -70,7 +72,7 @@ public class GamePlayManager : MonoBehaviour
         }
     }
 
-    private void SwapTwoFruits()
+    private void HandleFruitSwap()
     {
         Vector3 tempPos = selectedFruit.transform.position;
 
@@ -79,18 +81,36 @@ public class GamePlayManager : MonoBehaviour
 
         if (selectedFruit.transform.position == lastSelectedPos && lastSelectedFruit.transform.position == selectedPos)
         {
-            ResetSelectionsAndVariables();
+            ClearAllMatches(selectedFruit);
+            ClearAllMatches(lastSelectedFruit);
+                        
+            ResetVariables();
         }
     }
 
-    private void ResetSelectionsAndVariables()
+    private void ClearAllMatches(GameObject go)
     {
-        SetSelection(selectedFruit, false);
-        SetSelection(lastSelectedFruit, false);
+        FindAndClearMatch(go, new Vector2[2] { Vector2.left, Vector2.right });
+        FindAndClearMatch(go, new Vector2[2] { Vector2.up, Vector2.down });
+
+        if (matchFound)
+        {
+            Destroy(go);
+        }
+        
+    }
+
+    private void ResetVariables()
+    {
+        if(selectedFruit)
+            SetSelection(selectedFruit, false);
+        if(lastSelectedFruit)
+            SetSelection(lastSelectedFruit, false);
         selectedFruit = null;
         lastSelectedFruit = null;
         selectedPos = Vector3.zero;
         lastSelectedPos = Vector3.zero;
+        matchFound = false;
         swappingInProgress = false;
     }
 
@@ -99,4 +119,44 @@ public class GamePlayManager : MonoBehaviour
         go.transform.Find("Selection").gameObject.SetActive(isActive);
     }
 
+    private void FindAndClearMatch(GameObject go, Vector2[] directions)
+    {
+        List<GameObject> matchingFruits = new List<GameObject>();
+
+        for (int i = 0; i < directions.Length; i++)
+        {
+            matchingFruits.AddRange(FindMatchInDirection(go, directions[i]));
+        }
+        
+        if (matchingFruits.Count >= 2)
+        {
+            for (int i = 0; i < matchingFruits.Count; i++)
+            {
+                Destroy(matchingFruits[i]);
+            }
+            matchFound = true;
+        }
+
+    }
+
+
+    private List<GameObject> FindMatchInDirection(GameObject go, Vector2 castDir)
+    {
+        List<GameObject> matchingFruits = new List<GameObject>();
+
+        go.GetComponent<BoxCollider2D>().enabled = false; // disable collider so would not hit itself
+        RaycastHit2D hit = Physics2D.Raycast(go.transform.position, castDir);
+        go.GetComponent<BoxCollider2D>().enabled = true; // enable collider so next time it will work :)
+
+        while (hit.collider != null && hit.collider.GetComponent<Fruit>().GetFruitType() == go.GetComponent<Fruit>().GetFruitType())
+        {
+            matchingFruits.Add(hit.collider.gameObject);
+            BoxCollider2D boxCollider = hit.collider.gameObject.GetComponent<BoxCollider2D>();
+            boxCollider.enabled = false; // disable collider so would not hit itself
+            hit = Physics2D.Raycast(hit.collider.transform.position, castDir);
+            boxCollider.enabled = true; // enable collider so next time it will work :)
+        }
+        return matchingFruits;
+
+    }
 }

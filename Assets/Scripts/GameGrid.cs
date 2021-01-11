@@ -52,22 +52,6 @@ public class GameGrid : MonoBehaviour
         }        
     }
 
-    public List<GameObject> FindMatch(GameObject go, Vector2 direction)
-    {
-        List<GameObject> matchingFruits = new List<GameObject>();
-
-        if (direction == Vector2.up || direction == Vector2.down)
-        {
-            // TODO
-        }
-        else if (direction == Vector2.left || direction == Vector2.right)
-        {
-            // TODO
-        }
-
-        return matchingFruits;
-    }
-
     public bool IsNeighbor(GameObject goOne, GameObject goTwo)
     {
         GetGameObjectGridPos(goOne, out int nodeOneX, out int nodeOneY);
