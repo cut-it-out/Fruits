@@ -11,5 +11,21 @@ public class Fruit : MonoBehaviour
         Strawberry
     }
 
-    public Type fruitType;
+    [SerializeField] Type fruitType;
+    private Node fruitNode;
+
+    public Type GetFruitType()
+    {
+        return fruitType;
+    }
+
+    public void SetFruitNode(Node n)
+    {
+        fruitNode = n;
+    }
+
+    public Node GetFruitNode()
+    {
+        return fruitNode;
+    }
 }

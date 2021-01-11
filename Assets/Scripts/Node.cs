@@ -4,13 +4,18 @@ using UnityEngine;
 
 public class Node
 {
-    public Vector3 worldPosition { get; }
+    public GameObject fruitGameObject { get; }
     public Fruit.Type fruit { get; } 
     
-    public Node(Fruit.Type _fruit, Vector3 _worldPos)
+    public Node(Fruit.Type _fruit, GameObject _fruitGameObject)
     {
         fruit = _fruit;
-        worldPosition = _worldPos;
+        fruitGameObject = _fruitGameObject;
+    }
+
+    public Vector3 GetPosision()
+    {
+        return fruitGameObject.transform.position;
     }
 
 }
