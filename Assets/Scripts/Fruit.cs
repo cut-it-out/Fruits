@@ -18,4 +18,9 @@ public class Fruit : MonoBehaviour
         return fruitType;
     }
 
+    public void AddGridPlacementToName(string newPlace)
+    {
+        gameObject.name = gameObject.name + " " + newPlace;
+    }
+
 }

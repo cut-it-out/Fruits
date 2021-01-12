@@ -8,6 +8,7 @@ public class HandleClick : MonoBehaviour
 
     void OnMouseDown()
     {
+        //Debug.Log("clicked: " + name);
         fruitClick.Occured(gameObject);
     }
 

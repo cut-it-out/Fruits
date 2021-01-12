@@ -46,6 +46,9 @@ public class GameGrid : MonoBehaviour
                 // Instantiate fruit
                 GameObject fruitGameObject = Instantiate(prefab, worldPoint, Quaternion.identity);
                 
+                // for debug
+                //fruitGameObject.GetComponent<Fruit>().AddGridPlacementToName("(" + x.ToString() + "-" + y.ToString() + ")");
+
                 // save it to the grid
                 grid[x, y] = fruitGameObject;
             }

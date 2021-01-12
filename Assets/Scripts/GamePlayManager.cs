@@ -81,7 +81,9 @@ public class GamePlayManager : MonoBehaviour
 
         if (selectedFruit.transform.position == lastSelectedPos && lastSelectedFruit.transform.position == selectedPos)
         {
+            //Debug.Log("selected>");
             ClearAllMatches(selectedFruit);
+            //Debug.Log("lastSelected>");
             ClearAllMatches(lastSelectedFruit);
                         
             ResetVariables();
@@ -90,6 +92,8 @@ public class GamePlayManager : MonoBehaviour
 
     private void ClearAllMatches(GameObject go)
     {
+        //Debug.Log("ClearAllMatches - name - " + go.name);
+        //Debug.Log("ClearAllMatches - pos - " + go.transform.position);
         FindAndClearMatch(go, new Vector2[2] { Vector2.left, Vector2.right });
         FindAndClearMatch(go, new Vector2[2] { Vector2.up, Vector2.down });
 
@@ -97,7 +101,7 @@ public class GamePlayManager : MonoBehaviour
         {
             Destroy(go);
         }
-        
+        matchFound = false;
     }
 
     private void ResetVariables()
@@ -110,7 +114,7 @@ public class GamePlayManager : MonoBehaviour
         lastSelectedFruit = null;
         selectedPos = Vector3.zero;
         lastSelectedPos = Vector3.zero;
-        matchFound = false;
+        
         swappingInProgress = false;
     }
 
