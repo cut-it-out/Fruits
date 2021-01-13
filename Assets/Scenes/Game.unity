@@ -213,6 +213,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5496918270257409044, guid: 9f6ded4513b113b42bb3f59581b8e958, type: 3}
+      propertyPath: swapDuration
+      value: 0.56
+      objectReference: {fileID: 0}
     - target: {fileID: 5496918270257409045, guid: 9f6ded4513b113b42bb3f59581b8e958, type: 3}
       propertyPath: m_RootOrder
       value: 1

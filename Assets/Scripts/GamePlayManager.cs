@@ -6,6 +6,7 @@ using UnityEngine;
 public class GamePlayManager : MonoBehaviour
 {
     [SerializeField] float swapDuration = .15f;
+    [SerializeField] GameObject destroyEffect;
 
     // variables
     private GameObject selectedFruit, lastSelectedFruit;
@@ -99,6 +100,7 @@ public class GamePlayManager : MonoBehaviour
 
         if (matchFound)
         {
+            PlayDestroyEffect(go.transform.position);
             Destroy(go);
         }
         matchFound = false;
@@ -136,13 +138,13 @@ public class GamePlayManager : MonoBehaviour
         {
             for (int i = 0; i < matchingFruits.Count; i++)
             {
+                PlayDestroyEffect(matchingFruits[i].transform.position);
                 Destroy(matchingFruits[i]);
             }
             matchFound = true;
         }
 
     }
-
 
     private List<GameObject> FindMatchInDirection(GameObject go, Vector2 castDir)
     {
@@ -162,5 +164,10 @@ public class GamePlayManager : MonoBehaviour
         }
         return matchingFruits;
 
+    }
+
+    private void PlayDestroyEffect(Vector3 pos)
+    {
+        Instantiate(destroyEffect, pos, Quaternion.identity);
     }
 }
