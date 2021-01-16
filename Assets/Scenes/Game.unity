@@ -265,5 +265,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: GamePlayManager
       objectReference: {fileID: 0}
+    - target: {fileID: 5496918270257409047, guid: 9f6ded4513b113b42bb3f59581b8e958, type: 3}
+      propertyPath: shiftDelay
+      value: 0.03
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9f6ded4513b113b42bb3f59581b8e958, type: 3}

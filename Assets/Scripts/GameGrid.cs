@@ -8,11 +8,14 @@ public class GameGrid : MonoBehaviour
     [SerializeField] float nodeRadius = 0.5f;
     [SerializeField] Vector3 gridBottomLeftPos;
     [SerializeField] List<GameObject> fruitList;
+    [SerializeField] float shiftDelay = .03f;
 
     GameObject[,] grid;
 
     float nodeDiameter;
     int gridSizeX, gridSizeY;
+
+    public bool IsShifting { get; set; }
 
     private void Start()
     {
@@ -53,6 +56,13 @@ public class GameGrid : MonoBehaviour
                 grid[x, y] = fruitGameObject;
             }
         }        
+    }
+
+    private Vector3 GetWorldPoint(int x, int y)
+    {
+        return gridBottomLeftPos
+                + Vector3.right * (x * nodeDiameter + nodeRadius)
+                + Vector3.up * (y * nodeDiameter + nodeRadius);
     }
 
     public bool IsNeighbor(GameObject goOne, GameObject goTwo)
@@ -122,41 +132,139 @@ public class GameGrid : MonoBehaviour
                 gridSizeY - 1);
     }
 
+    public void RemoveObjectFromGrid(GameObject go)
+    {
+        GetGameObjectGridPos(go, out int goX, out int goY);
+        grid[goX, goY] = null;
+    }
 
-    //void OnDrawGizmos()
-    //{
-    //    if (grid != null)
-    //    {
-    //        foreach (Node n in grid)
-    //        {
+    public void SwapObjects(GameObject goOne, GameObject goTwo)
+    {
+        GetGameObjectGridPos(goOne, out int goOneX, out int goOneY);
+        GetGameObjectGridPos(goTwo, out int goTwoX, out int goTwoY);
+        grid[goOneX, goOneY] = goTwo;
+        grid[goTwoX, goTwoY] = goOne;
+    }
 
-    //            switch (n.fruit)
-    //            {
-    //                case Fruit.Type.Banana:
-    //                    Gizmos.color = Color.yellow;
-    //                    break;
-    //                case Fruit.Type.Apple:
-    //                    Gizmos.color = Color.green;
-    //                    break;
-    //                case Fruit.Type.Peach:
-    //                    Gizmos.color = Color.cyan;
-    //                    break;
-    //                case Fruit.Type.Pineapple:
-    //                    Gizmos.color = Color.blue;
-    //                    break;
-    //                case Fruit.Type.Strawberry:
-    //                    Gizmos.color = Color.red;
-    //                    break;
-    //                default:
-    //                    Gizmos.color = Color.gray;
-    //                    break;
-    //            }
+    public void PrintGridPos(GameObject go)
+    {
+        GetGameObjectGridPos(go, out int goX, out int goY);
+        Debug.Log("GRID(x: " + goX + " y: " + goY + ")");
+        if (grid[goX,goY]==null)
+        {
+            Debug.Log("GRID entry is NULL");
+        }
+        else
+        {
+            Debug.Log(grid[goX, goY].GetComponent<Fruit>().GetFruitType());
+        }
+        Debug.Log("***********");
+    }
 
-    //            Gizmos.DrawCube(
-    //                n.worldPosition,
-    //                new Vector3(nodeDiameter, nodeDiameter, 1f)
-    //                );
-    //        }
-    //    }
-    //}
+    public IEnumerator FindEmptyTiles()
+    //public void FindEmptyTiles()
+    {
+        Debug.Log("FindEmptyTiles invoke in gridgame");
+        for (int x = 0; x < gridSizeX; x++)
+        {
+            for (int y = 0; y < gridSizeY; y++)
+            {
+                if (grid[x, y] == null)
+                {
+                    Debug.Log("ShiftTilesDown(x, y); x: " + x + " y: " + y);
+                    yield return StartCoroutine(ShiftTilesDown(x, y));
+                    //ShiftTilesDown(x, y);
+                    break;
+                }
+            }
+        }
+    }
+
+    private IEnumerator ShiftTilesDown(int x, int yStart)
+    //private void ShiftTilesDown(int x, int yStart, float shiftDelay = .03f)
+    {
+        IsShifting = true;
+        int nullCount = 0;
+        
+        for (int y = yStart; y < gridSizeY; y++)
+        {
+            if (grid[x, y] == null)
+            {
+                nullCount++;
+                Debug.Log("looking for null; x: " + x + " y: " + y);
+                Debug.Log("nullCount: " + nullCount);
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        for (int i = 0; i <= gridSizeY - yStart; i++)
+        {
+            if (yStart + i + nullCount >= gridSizeY || grid[x, yStart + i + nullCount] == null)
+            {
+                break;
+            }
+            yield return new WaitForSeconds(shiftDelay);
+            
+            Debug.Log("start+i " + yStart + i);
+            Debug.Log("start+nullCount " + yStart + i + nullCount );
+            grid[x, yStart + i + nullCount].transform.position = GetWorldPoint(x, yStart + i);
+            grid[x, yStart + i] = grid[x, yStart + i + nullCount];
+            grid[x, yStart + i + nullCount] = null;
+            
+            Debug.Log("-------");
+        }
+        IsShifting = false;
+    }
+
+    void OnDrawGizmos()
+    {
+        if (grid != null)
+        {
+            for (int x = 0; x < gridSizeX; x++)
+            {
+                for (int y = 0; y < gridSizeY; y++)
+                {
+                    
+                    if (grid[x, y] == null)
+                    {
+                        Gizmos.color = Color.white;
+                    }
+                    else
+                    {
+                        switch (grid[x, y].GetComponent<Fruit>().GetFruitType())
+                        {
+                            case Fruit.Type.Banana:
+                                Gizmos.color = Color.black;
+                                break;
+                            case Fruit.Type.Apple:
+                                Gizmos.color = Color.green;
+                                break;
+                            case Fruit.Type.Peach:
+                                Gizmos.color = Color.yellow;
+                                break;
+                            case Fruit.Type.Pineapple:
+                                Gizmos.color = Color.blue;
+                                break;
+                            case Fruit.Type.Strawberry:
+                                Gizmos.color = Color.red;
+                                break;
+                            default:
+                                Gizmos.color = Color.cyan;
+                                break;
+                        }
+                    }
+
+                    Vector3 gizmoPos = grid[x, y] ? grid[x, y].transform.position : GetWorldPoint(x, y);
+
+                    Gizmos.DrawCube(
+                        gizmoPos,
+                        new Vector3(nodeDiameter - 0.7f, nodeDiameter - 0.7f, 1f)
+                        );
+                }
+            }
+        }
+    }
 }

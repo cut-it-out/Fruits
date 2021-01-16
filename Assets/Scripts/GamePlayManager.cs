@@ -32,6 +32,9 @@ public class GamePlayManager : MonoBehaviour
 
     public void HandleFruitSelected(GameObject justClickedFruit)
     {
+        // for debug purposes
+        gGrid.PrintGridPos(justClickedFruit);
+
         if (!swappingInProgress)
         {
             if (justClickedFruit == selectedFruit)
@@ -60,6 +63,7 @@ public class GamePlayManager : MonoBehaviour
 
                         // trigger swapping
                         swappingInProgress = true;
+                        gGrid.SwapObjects(selectedFruit, lastSelectedFruit);
                     }
                     else
                     {
@@ -88,6 +92,7 @@ public class GamePlayManager : MonoBehaviour
             ClearAllMatches(lastSelectedFruit);
                         
             ResetVariables();
+            
         }
     }
 
@@ -102,6 +107,12 @@ public class GamePlayManager : MonoBehaviour
         {
             PlayDestroyEffect(go.transform.position);
             Destroy(go);
+            gGrid.RemoveObjectFromGrid(go);
+            StopCoroutine(gGrid.FindEmptyTiles());
+            StartCoroutine(gGrid.FindEmptyTiles());
+            //gGrid.FindEmptyTiles();
+
+
         }
         matchFound = false;
     }
@@ -140,6 +151,8 @@ public class GamePlayManager : MonoBehaviour
             {
                 PlayDestroyEffect(matchingFruits[i].transform.position);
                 Destroy(matchingFruits[i]);
+                gGrid.RemoveObjectFromGrid(matchingFruits[i]);
+                
             }
             matchFound = true;
         }
@@ -170,4 +183,6 @@ public class GamePlayManager : MonoBehaviour
     {
         Instantiate(destroyEffect, pos, Quaternion.identity);
     }
+
+
 }
