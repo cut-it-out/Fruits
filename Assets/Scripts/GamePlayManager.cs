@@ -30,6 +30,8 @@ public class GamePlayManager : MonoBehaviour
         }
     }
 
+
+
     public void HandleFruitSelected(GameObject justClickedFruit)
     {
         // for debug purposes
@@ -109,8 +111,7 @@ public class GamePlayManager : MonoBehaviour
             Destroy(go);
             gGrid.RemoveObjectFromGrid(go);
             StopCoroutine(gGrid.FindEmptyTiles());
-            StartCoroutine(gGrid.FindEmptyTiles());
-            //gGrid.FindEmptyTiles();
+            StartCoroutine(gGrid.FindEmptyTiles());           
 
 
         }
@@ -178,7 +179,7 @@ public class GamePlayManager : MonoBehaviour
         return matchingFruits;
 
     }
-
+    
     private void PlayDestroyEffect(Vector3 pos)
     {
         Instantiate(destroyEffect, pos, Quaternion.identity);

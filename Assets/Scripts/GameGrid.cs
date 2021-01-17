@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GameGrid : MonoBehaviour
@@ -11,6 +13,8 @@ public class GameGrid : MonoBehaviour
     [SerializeField] float shiftDelay = .03f;
 
     GameObject[,] grid;
+    Dictionary<Fruit.Type, GameObject> fruits = new Dictionary<Fruit.Type, GameObject>();
+    List<Fruit.Type> allFruitList;
 
     float nodeDiameter;
     int gridSizeX, gridSizeY;
@@ -20,7 +24,7 @@ public class GameGrid : MonoBehaviour
     private void Start()
     {
         Initialize();
-        CreateGrid();
+        FillUpGrid();
     }
 
     public void Initialize()
@@ -28,35 +32,72 @@ public class GameGrid : MonoBehaviour
         nodeDiameter = nodeRadius * 2;
         gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
         gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
-    }
 
-    private void CreateGrid()
-    {
+        // init grid
         grid = new GameObject[gridSizeX, gridSizeY];
 
+        // init fruit dictionary
+        foreach (GameObject fruitObject in fruitList)
+        {
+            Fruit.Type ft = fruitObject.GetComponent<Fruit>().GetFruitType();
+            if (fruits.ContainsKey(ft))
+            {
+                Debug.LogWarning("Fruit list contains more then one from " + ft.ToString() + ". Second entry was not added to the game.");
+            }
+            else
+            {
+                fruits.Add(ft, fruitObject);
+            }
+        }
+
+        // init all fruit list
+        allFruitList = Enum.GetValues(typeof(Fruit.Type)).Cast<Fruit.Type>().ToList();
+
+        //List<Fruit.Type> f = new List<Fruit.Type>();
+        //f.Add(Fruit.Type.Apple);
+        //f.Add(Fruit.Type.Banana);
+        //Debug.Log("RANDOM RESULT1: " + RandomFruit(f).ToString());
+        //f.Add(Fruit.Type.Peach);
+        //f.Add(Fruit.Type.Pineapple);
+        //Debug.Log("RANDOM RESULT2: " + RandomFruit(f).ToString());
+    }
+
+    private void FillUpGrid()
+    {
         for(int x = 0; x < gridSizeX; x++)
         {
             for (int y = 0; y < gridSizeY; y++)
             {
-                Vector3 worldPoint =
-                    gridBottomLeftPos
-                    + Vector3.right * (x * nodeDiameter + nodeRadius)
-                    + Vector3.up * (y * nodeDiameter + nodeRadius);
-
-                // randomly select a prefab from the list
-                GameObject prefab = fruitList[UnityEngine.Random.Range(0, fruitList.Count)];
-
-                // Instantiate fruit
-                GameObject fruitGameObject = Instantiate(prefab, worldPoint, Quaternion.identity);
-                
-                // for debug
-                //fruitGameObject.GetComponent<Fruit>().AddGridPlacementToName("(" + x.ToString() + "-" + y.ToString() + ")");
-
-                // save it to the grid
-                grid[x, y] = fruitGameObject;
+                if (!grid[x, y])
+                {
+                    AddNewFruitToGrid(x, y);
+                }
             }
         }        
     }
+
+    private void AddNewFruitToGrid(int x, int y)
+    {
+        Vector3 worldPoint =
+            gridBottomLeftPos
+            + Vector3.right * (x * nodeDiameter + nodeRadius)
+            + Vector3.up * (y * nodeDiameter + nodeRadius);
+
+        // randomly select a prefab from the list
+        //GameObject prefab = fruitList[UnityEngine.Random.Range(0, fruitList.Count)];
+        GameObject prefab = GetNewFruit(x, y);
+        //TODO replace this with a function to give back a fruit
+
+        // Instantiate fruit
+        GameObject fruitGameObject = Instantiate(prefab, worldPoint, Quaternion.identity);
+
+        // for debug
+        //fruitGameObject.GetComponent<Fruit>().AddGridPlacementToName("(" + x.ToString() + "-" + y.ToString() + ")");
+
+        // save it to the grid
+        grid[x, y] = fruitGameObject;
+    }
+
 
     private Vector3 GetWorldPoint(int x, int y)
     {
@@ -162,26 +203,22 @@ public class GameGrid : MonoBehaviour
     }
 
     public IEnumerator FindEmptyTiles()
-    //public void FindEmptyTiles()
     {
-        Debug.Log("FindEmptyTiles invoke in gridgame");
+        //Debug.Log("FindEmptyTiles invoke in gridgame");
         for (int x = 0; x < gridSizeX; x++)
         {
             for (int y = 0; y < gridSizeY; y++)
             {
                 if (grid[x, y] == null)
                 {
-                    Debug.Log("ShiftTilesDown(x, y); x: " + x + " y: " + y);
                     yield return StartCoroutine(ShiftTilesDown(x, y));
-                    //ShiftTilesDown(x, y);
                     break;
                 }
             }
-        }
+        }        
     }
 
     private IEnumerator ShiftTilesDown(int x, int yStart)
-    //private void ShiftTilesDown(int x, int yStart, float shiftDelay = .03f)
     {
         IsShifting = true;
         int nullCount = 0;
@@ -191,32 +228,100 @@ public class GameGrid : MonoBehaviour
             if (grid[x, y] == null)
             {
                 nullCount++;
-                Debug.Log("looking for null; x: " + x + " y: " + y);
-                Debug.Log("nullCount: " + nullCount);
             }
             else
             {
                 break;
             }
         }
-
-        for (int i = 0; i <= gridSizeY - yStart; i++)
+        
+        for (int moveTo = yStart; moveTo < gridSizeY; moveTo++)
         {
-            if (yStart + i + nullCount >= gridSizeY || grid[x, yStart + i + nullCount] == null)
-            {
-                break;
-            }
+            int moveFrom = moveTo + nullCount;
+
+            Debug.Log("moveFrom " + moveFrom + " --- moveTo " + moveTo);
+
             yield return new WaitForSeconds(shiftDelay);
-            
-            Debug.Log("start+i " + yStart + i);
-            Debug.Log("start+nullCount " + yStart + i + nullCount );
-            grid[x, yStart + i + nullCount].transform.position = GetWorldPoint(x, yStart + i);
-            grid[x, yStart + i] = grid[x, yStart + i + nullCount];
-            grid[x, yStart + i + nullCount] = null;
-            
-            Debug.Log("-------");
+
+            if (moveFrom >= gridSizeY)
+            {
+                Debug.Log("moveFrom >= gridSizeY");
+                if (grid[x, moveTo] == null)
+                {
+                    Debug.Log("grid[x, moveTo] == null");
+                    AddNewFruitToGrid(x, moveTo);
+                }
+            }
+            else
+            {
+                grid[x, moveFrom].transform.position = GetWorldPoint(x, moveTo);
+                grid[x, moveTo] = grid[x, moveFrom];
+                grid[x, moveFrom] = null;
+
+                //if (moveFrom + 1 < gridSizeY)
+                //{
+                //    if (grid[x, moveFrom + 1] == null)
+                //    {
+                //        AddNewFruitToGrid(x, moveFrom);
+                //    }
+                //}
+            }
+
         }
-        IsShifting = false;
+        IsShifting = false;        
+    }
+
+    private GameObject GetNewFruit(int x, int y)
+    {
+        Debug.Log("New Fruit for > x: " + x + " y: " + y);
+        List<Fruit.Type> possibleFruits = new List<Fruit.Type>();
+        possibleFruits.AddRange(allFruitList);
+
+        if (x > 0)
+        {
+            possibleFruits.Remove(grid[x - 1, y].GetComponent<Fruit>().GetFruitType());
+        }
+
+        if (x < gridSizeX - 1 && grid[x + 1, y])
+        {
+            possibleFruits.Remove(grid[x + 1, y].GetComponent<Fruit>().GetFruitType());
+        }
+
+        if (y > 0)
+        {
+            possibleFruits.Remove(grid[x, y - 1].GetComponent<Fruit>().GetFruitType());
+        }
+
+        Fruit.Type fruitType = RandomFruit(possibleFruits);
+        
+        return fruits[fruitType];
+    }
+
+    public Fruit.Type RandomFruit(List<Fruit.Type> fruitList = null)
+    {
+        // if nothing to exclude then return random from enum
+        if (fruitList == null)
+        {
+            return (Fruit.Type)UnityEngine.Random.Range(0, Enum.GetValues(typeof(Fruit.Type)).Length);
+        }
+        // there are fruits which needs to be excluded
+        else
+        {
+            Debug.Log("get random fruit");
+
+            //List<Fruit.Type> fruitList = new List<Fruit.Type>();
+            //foreach (var fruit in allFruitList)
+            //{
+            //    Debug.Log(fruit.ToString());
+            //    if (!fruitListToExclude.Contains(fruit))
+            //    {
+            //        Debug.Log(fruit.ToString() + " << ADDED");
+            //        fruitList.Add(fruit);
+            //    }
+            //}
+
+            return fruitList[UnityEngine.Random.Range(0, fruitList.Count)];
+        }
     }
 
     void OnDrawGizmos()
@@ -267,4 +372,6 @@ public class GameGrid : MonoBehaviour
             }
         }
     }
+    
+
 }
