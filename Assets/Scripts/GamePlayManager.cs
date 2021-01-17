@@ -6,13 +6,12 @@ using UnityEngine;
 public class GamePlayManager : MonoBehaviour
 {
     [SerializeField] float swapDuration = .15f;
-    [SerializeField] GameObject destroyEffect;
 
     // variables
     private GameObject selectedFruit, lastSelectedFruit;
     private Vector3 selectedPos, lastSelectedPos;
     private bool swappingInProgress = false;
-    private bool matchFound = false;
+    
 
     // cached 
     private GameGrid gGrid;
@@ -30,14 +29,12 @@ public class GamePlayManager : MonoBehaviour
         }
     }
 
-
-
     public void HandleFruitSelected(GameObject justClickedFruit)
     {
         // for debug purposes
         gGrid.PrintGridPos(justClickedFruit);
 
-        if (!swappingInProgress)
+        if (!swappingInProgress && !gGrid.IsShifting)
         {
             if (justClickedFruit == selectedFruit)
             {
@@ -89,34 +86,16 @@ public class GamePlayManager : MonoBehaviour
         if (selectedFruit.transform.position == lastSelectedPos && lastSelectedFruit.transform.position == selectedPos)
         {
             //Debug.Log("selected>");
-            ClearAllMatches(selectedFruit);
+            gGrid.ClearAllMatches(selectedFruit);
             //Debug.Log("lastSelected>");
-            ClearAllMatches(lastSelectedFruit);
+            gGrid.ClearAllMatches(lastSelectedFruit);
                         
             ResetVariables();
             
         }
     }
 
-    private void ClearAllMatches(GameObject go)
-    {
-        //Debug.Log("ClearAllMatches - name - " + go.name);
-        //Debug.Log("ClearAllMatches - pos - " + go.transform.position);
-        FindAndClearMatch(go, new Vector2[2] { Vector2.left, Vector2.right });
-        FindAndClearMatch(go, new Vector2[2] { Vector2.up, Vector2.down });
-
-        if (matchFound)
-        {
-            PlayDestroyEffect(go.transform.position);
-            Destroy(go);
-            gGrid.RemoveObjectFromGrid(go);
-            StopCoroutine(gGrid.FindEmptyTiles());
-            StartCoroutine(gGrid.FindEmptyTiles());           
-
-
-        }
-        matchFound = false;
-    }
+    
 
     private void ResetVariables()
     {
@@ -137,53 +116,9 @@ public class GamePlayManager : MonoBehaviour
         go.transform.Find("Selection").gameObject.SetActive(isActive);
     }
 
-    private void FindAndClearMatch(GameObject go, Vector2[] directions)
-    {
-        List<GameObject> matchingFruits = new List<GameObject>();
-
-        for (int i = 0; i < directions.Length; i++)
-        {
-            matchingFruits.AddRange(FindMatchInDirection(go, directions[i]));
-        }
-        
-        if (matchingFruits.Count >= 2)
-        {
-            for (int i = 0; i < matchingFruits.Count; i++)
-            {
-                PlayDestroyEffect(matchingFruits[i].transform.position);
-                Destroy(matchingFruits[i]);
-                gGrid.RemoveObjectFromGrid(matchingFruits[i]);
-                
-            }
-            matchFound = true;
-        }
-
-    }
-
-    private List<GameObject> FindMatchInDirection(GameObject go, Vector2 castDir)
-    {
-        List<GameObject> matchingFruits = new List<GameObject>();
-
-        go.GetComponent<BoxCollider2D>().enabled = false; // disable collider so would not hit itself
-        RaycastHit2D hit = Physics2D.Raycast(go.transform.position, castDir);
-        go.GetComponent<BoxCollider2D>().enabled = true; // enable collider so next time it will work :)
-
-        while (hit.collider != null && hit.collider.GetComponent<Fruit>().GetFruitType() == go.GetComponent<Fruit>().GetFruitType())
-        {
-            matchingFruits.Add(hit.collider.gameObject);
-            BoxCollider2D boxCollider = hit.collider.gameObject.GetComponent<BoxCollider2D>();
-            boxCollider.enabled = false; // disable collider so would not hit itself
-            hit = Physics2D.Raycast(hit.collider.transform.position, castDir);
-            boxCollider.enabled = true; // enable collider so next time it will work :)
-        }
-        return matchingFruits;
-
-    }
     
-    private void PlayDestroyEffect(Vector3 pos)
-    {
-        Instantiate(destroyEffect, pos, Quaternion.identity);
-    }
+    
+    
 
 
 }

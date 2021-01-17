@@ -12,6 +12,7 @@ public class Fruit : MonoBehaviour
     }
 
     [SerializeField] Type fruitType;
+    [SerializeField] GameObject destroyEffect;
 
     public Type GetFruitType()
     {
@@ -23,4 +24,8 @@ public class Fruit : MonoBehaviour
         gameObject.name = gameObject.name + " " + newPlace;
     }
 
+    public void PlayDestroyEffect()
+    {
+        Instantiate(destroyEffect, transform.position, Quaternion.identity);
+    }
 }

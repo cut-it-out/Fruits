@@ -18,6 +18,7 @@ public class GameGrid : MonoBehaviour
 
     float nodeDiameter;
     int gridSizeX, gridSizeY;
+    private bool matchFound = false;
 
     public bool IsShifting { get; set; }
 
@@ -202,6 +203,65 @@ public class GameGrid : MonoBehaviour
         Debug.Log("***********");
     }
 
+    public void ClearAllMatches(GameObject go)
+    {
+        FindAndClearMatch(go, new Vector2[2] { Vector2.left, Vector2.right });
+        FindAndClearMatch(go, new Vector2[2] { Vector2.up, Vector2.down });
+
+        if (matchFound)
+        {
+            go.GetComponent<Fruit>().PlayDestroyEffect();
+            Destroy(go);
+            RemoveObjectFromGrid(go);
+            StopCoroutine(FindEmptyTiles());
+            StartCoroutine(FindEmptyTiles());
+        }
+        matchFound = false;
+    }
+
+    private void FindAndClearMatch(GameObject go, Vector2[] directions)
+    {
+        List<GameObject> matchingFruits = new List<GameObject>();
+
+        for (int i = 0; i < directions.Length; i++)
+        {
+            matchingFruits.AddRange(FindMatchInDirection(go, directions[i]));
+        }
+
+        if (matchingFruits.Count >= 2)
+        {
+            for (int i = 0; i < matchingFruits.Count; i++)
+            {
+                matchingFruits[i].GetComponent<Fruit>().PlayDestroyEffect();
+                Destroy(matchingFruits[i]);
+                RemoveObjectFromGrid(matchingFruits[i]);
+
+            }
+            matchFound = true;
+        }
+
+    }
+
+    private List<GameObject> FindMatchInDirection(GameObject go, Vector2 castDir)
+    {
+        List<GameObject> matchingFruits = new List<GameObject>();
+
+        go.GetComponent<BoxCollider2D>().enabled = false; // disable collider so would not hit itself
+        RaycastHit2D hit = Physics2D.Raycast(go.transform.position, castDir);
+        go.GetComponent<BoxCollider2D>().enabled = true; // enable collider so next time it will work :)
+
+        while (hit.collider != null && hit.collider.GetComponent<Fruit>().GetFruitType() == go.GetComponent<Fruit>().GetFruitType())
+        {
+            matchingFruits.Add(hit.collider.gameObject);
+            BoxCollider2D boxCollider = hit.collider.gameObject.GetComponent<BoxCollider2D>();
+            boxCollider.enabled = false; // disable collider so would not hit itself
+            hit = Physics2D.Raycast(hit.collider.transform.position, castDir);
+            boxCollider.enabled = true; // enable collider so next time it will work :)
+        }
+        return matchingFruits;
+
+    }
+
     public IEnumerator FindEmptyTiles()
     {
         //Debug.Log("FindEmptyTiles invoke in gridgame");
@@ -257,14 +317,6 @@ public class GameGrid : MonoBehaviour
                 grid[x, moveFrom].transform.position = GetWorldPoint(x, moveTo);
                 grid[x, moveTo] = grid[x, moveFrom];
                 grid[x, moveFrom] = null;
-
-                //if (moveFrom + 1 < gridSizeY)
-                //{
-                //    if (grid[x, moveFrom + 1] == null)
-                //    {
-                //        AddNewFruitToGrid(x, moveFrom);
-                //    }
-                //}
             }
 
         }
@@ -308,18 +360,6 @@ public class GameGrid : MonoBehaviour
         else
         {
             Debug.Log("get random fruit");
-
-            //List<Fruit.Type> fruitList = new List<Fruit.Type>();
-            //foreach (var fruit in allFruitList)
-            //{
-            //    Debug.Log(fruit.ToString());
-            //    if (!fruitListToExclude.Contains(fruit))
-            //    {
-            //        Debug.Log(fruit.ToString() + " << ADDED");
-            //        fruitList.Add(fruit);
-            //    }
-            //}
-
             return fruitList[UnityEngine.Random.Range(0, fruitList.Count)];
         }
     }

@@ -99,6 +99,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fruitType: 1
+  destroyEffect: {fileID: 3401724856344536393, guid: 9f7160cfda0477a4799e69c89a31c9f2, type: 3}
 --- !u!114 &-6317793719544544121
 MonoBehaviour:
   m_ObjectHideFlags: 0
