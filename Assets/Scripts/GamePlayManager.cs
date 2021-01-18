@@ -6,11 +6,15 @@ using UnityEngine;
 public class GamePlayManager : MonoBehaviour
 {
     [SerializeField] float swapDuration = .15f;
+    [SerializeField] int gameScoreBaseValue = 100;
+    [SerializeField] int gameScoreExtraValue = 50;
+    [SerializeField] int gameScoreIncrement = 2;
 
     // variables
     private GameObject selectedFruit, lastSelectedFruit;
     private Vector3 selectedPos, lastSelectedPos;
     private bool swappingInProgress = false;
+    private int gameScore = 0;
     
 
     // cached 
@@ -90,8 +94,6 @@ public class GamePlayManager : MonoBehaviour
         }
     }
 
-    
-
     private void ResetVariables()
     {
         if(selectedFruit)
@@ -111,9 +113,20 @@ public class GamePlayManager : MonoBehaviour
         go.transform.Find("Selection").gameObject.SetActive(isActive);
     }
 
-    
-    
-    
+    public void UpdateGameScore(int matchCount)
+    {
+        gameScore += matchCount * gameScoreBaseValue;
 
+        if (matchCount > 3)
+        {
+            gameScore +=  (((matchCount - 3) / gameScoreIncrement) + 1) * ((matchCount - 3) * gameScoreExtraValue);
+        }
+        
+    }
+
+    public int GetGameScore()
+    {
+        return gameScore;
+    }
 
 }

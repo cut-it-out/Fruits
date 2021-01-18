@@ -45,8 +45,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85874786a736f4b42b0af334c6edae7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  swapDuration: 0.15
-  destroyEffect: {fileID: 3401724856344536393, guid: 9f7160cfda0477a4799e69c89a31c9f2, type: 3}
+  swapDuration: 0.56
+  gameScoreBaseValue: 100
+  gameScoreExtraValue: 100
+  gameScoreIncrement: 2
 --- !u!114 &5496918270257409047
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -68,6 +70,7 @@ MonoBehaviour:
   - {fileID: 3847247229517273765, guid: 48a31095a80437f4c90b95b7ee73b4ac, type: 3}
   - {fileID: 7663170733264841640, guid: 2165f3d88ba28d349a62822796982cfe, type: 3}
   - {fileID: 6254918025174642187, guid: c1ec226d9628c3c41ae9cf476cfd62e0, type: 3}
+  shiftDelay: 0.02
 --- !u!114 &4580805523032688342
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -16,6 +16,8 @@ public class GameGrid : MonoBehaviour
     Dictionary<Fruit.Type, GameObject> fruits = new Dictionary<Fruit.Type, GameObject>();
     List<Fruit.Type> allFruitList;
 
+    GamePlayManager gp;
+
     float nodeDiameter;
     int gridSizeX, gridSizeY;
     private bool matchFound = false;
@@ -24,6 +26,7 @@ public class GameGrid : MonoBehaviour
 
     private void Start()
     {
+        gp = GetComponent<GamePlayManager>();
         Initialize();
         FillUpGrid();
     }
@@ -229,6 +232,8 @@ public class GameGrid : MonoBehaviour
 
         if (matchingFruits.Count >= 2)
         {
+            gp.UpdateGameScore(matchingFruits.Count + 1);
+
             for (int i = 0; i < matchingFruits.Count; i++)
             {
                 matchingFruits[i].GetComponent<Fruit>().PlayDestroyEffect();
