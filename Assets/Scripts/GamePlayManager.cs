@@ -31,9 +31,6 @@ public class GamePlayManager : MonoBehaviour
 
     public void HandleFruitSelected(GameObject justClickedFruit)
     {
-        // for debug purposes
-        gGrid.PrintGridPos(justClickedFruit);
-
         if (!swappingInProgress && !gGrid.IsShifting)
         {
             if (justClickedFruit == selectedFruit)
@@ -85,9 +82,7 @@ public class GamePlayManager : MonoBehaviour
 
         if (selectedFruit.transform.position == lastSelectedPos && lastSelectedFruit.transform.position == selectedPos)
         {
-            //Debug.Log("selected>");
             gGrid.ClearAllMatches(selectedFruit);
-            //Debug.Log("lastSelected>");
             gGrid.ClearAllMatches(lastSelectedFruit);
                         
             ResetVariables();

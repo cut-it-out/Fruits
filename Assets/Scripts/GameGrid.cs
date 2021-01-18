@@ -53,14 +53,6 @@ public class GameGrid : MonoBehaviour
 
         // init all fruit list
         allFruitList = Enum.GetValues(typeof(Fruit.Type)).Cast<Fruit.Type>().ToList();
-
-        //List<Fruit.Type> f = new List<Fruit.Type>();
-        //f.Add(Fruit.Type.Apple);
-        //f.Add(Fruit.Type.Banana);
-        //Debug.Log("RANDOM RESULT1: " + RandomFruit(f).ToString());
-        //f.Add(Fruit.Type.Peach);
-        //f.Add(Fruit.Type.Pineapple);
-        //Debug.Log("RANDOM RESULT2: " + RandomFruit(f).ToString());
     }
 
     private void FillUpGrid()
@@ -84,13 +76,8 @@ public class GameGrid : MonoBehaviour
             + Vector3.right * (x * nodeDiameter + nodeRadius)
             + Vector3.up * (y * nodeDiameter + nodeRadius);
 
-        // randomly select a prefab from the list
-        //GameObject prefab = fruitList[UnityEngine.Random.Range(0, fruitList.Count)];
-        GameObject prefab = GetNewFruit(x, y);
-        //TODO replace this with a function to give back a fruit
-
         // Instantiate fruit
-        GameObject fruitGameObject = Instantiate(prefab, worldPoint, Quaternion.identity);
+        GameObject fruitGameObject = Instantiate(GetNewFruit(x, y), worldPoint, Quaternion.identity);
 
         // for debug
         //fruitGameObject.GetComponent<Fruit>().AddGridPlacementToName("(" + x.ToString() + "-" + y.ToString() + ")");
@@ -188,9 +175,11 @@ public class GameGrid : MonoBehaviour
         grid[goTwoX, goTwoY] = goOne;
     }
 
+
     public void PrintGridPos(GameObject go)
     {
         GetGameObjectGridPos(go, out int goX, out int goY);
+        Debug.Log("***** item details ****");
         Debug.Log("GRID(x: " + goX + " y: " + goY + ")");
         if (grid[goX,goY]==null)
         {
@@ -200,13 +189,23 @@ public class GameGrid : MonoBehaviour
         {
             Debug.Log(grid[goX, goY].GetComponent<Fruit>().GetFruitType());
         }
-        Debug.Log("***********");
+        Debug.Log("***********************");
     }
 
-    public void ClearAllMatches(GameObject go)
+    public void ClearAllMatches(GameObject go, bool test = false)
     {
-        FindAndClearMatch(go, new Vector2[2] { Vector2.left, Vector2.right });
-        FindAndClearMatch(go, new Vector2[2] { Vector2.up, Vector2.down });
+        if (test)
+        {
+            FindAndClearMatch(go, new Vector2[1] { Vector2.right });
+            FindAndClearMatch(go, new Vector2[1] { Vector2.up });
+
+        }
+        else
+        {
+
+            FindAndClearMatch(go, new Vector2[2] { Vector2.left, Vector2.right });
+            FindAndClearMatch(go, new Vector2[2] { Vector2.up, Vector2.down });
+        }
 
         if (matchFound)
         {
@@ -246,18 +245,22 @@ public class GameGrid : MonoBehaviour
     {
         List<GameObject> matchingFruits = new List<GameObject>();
 
-        go.GetComponent<BoxCollider2D>().enabled = false; // disable collider so would not hit itself
-        RaycastHit2D hit = Physics2D.Raycast(go.transform.position, castDir);
-        go.GetComponent<BoxCollider2D>().enabled = true; // enable collider so next time it will work :)
-
-        while (hit.collider != null && hit.collider.GetComponent<Fruit>().GetFruitType() == go.GetComponent<Fruit>().GetFruitType())
+        if (go)
         {
-            matchingFruits.Add(hit.collider.gameObject);
-            BoxCollider2D boxCollider = hit.collider.gameObject.GetComponent<BoxCollider2D>();
-            boxCollider.enabled = false; // disable collider so would not hit itself
-            hit = Physics2D.Raycast(hit.collider.transform.position, castDir);
-            boxCollider.enabled = true; // enable collider so next time it will work :)
+            go.GetComponent<BoxCollider2D>().enabled = false; // disable collider so would not hit itself
+            RaycastHit2D hit = Physics2D.Raycast(go.transform.position, castDir);
+            go.GetComponent<BoxCollider2D>().enabled = true; // enable collider so next time it will work :)
+
+            while (hit.collider != null && hit.collider.GetComponent<Fruit>().GetFruitType() == go.GetComponent<Fruit>().GetFruitType())
+            {
+                matchingFruits.Add(hit.collider.gameObject);
+                BoxCollider2D boxCollider = hit.collider.gameObject.GetComponent<BoxCollider2D>();
+                boxCollider.enabled = false; // disable collider so would not hit itself
+                hit = Physics2D.Raycast(hit.collider.transform.position, castDir);
+                boxCollider.enabled = true; // enable collider so next time it will work :)
+            }
         }
+
         return matchingFruits;
 
     }
@@ -275,7 +278,15 @@ public class GameGrid : MonoBehaviour
                     break;
                 }
             }
-        }        
+        }
+
+        for (int gridX = 0; gridX < gridSizeX; gridX++)
+        {
+            for (int gridY = 0; gridY < gridSizeY; gridY++)
+            {
+                ClearAllMatches(grid[gridX, gridY]);
+            }
+        }
     }
 
     private IEnumerator ShiftTilesDown(int x, int yStart)
@@ -299,21 +310,28 @@ public class GameGrid : MonoBehaviour
         {
             int moveFrom = moveTo + nullCount;
 
-            Debug.Log("moveFrom " + moveFrom + " --- moveTo " + moveTo);
+            //Debug.Log("moveFrom " + moveFrom + " --- moveTo " + moveTo);
 
             yield return new WaitForSeconds(shiftDelay);
 
             if (moveFrom >= gridSizeY)
             {
-                Debug.Log("moveFrom >= gridSizeY");
+                //Debug.Log("moveFrom >= gridSizeY");
                 if (grid[x, moveTo] == null)
                 {
-                    Debug.Log("grid[x, moveTo] == null");
+                    //Debug.Log("grid[x, moveTo] == null");
                     AddNewFruitToGrid(x, moveTo);
                 }
             }
             else
             {
+                if (!grid[x, moveFrom])
+                {
+
+                    //Debug.Log("grid[x, moveFrom] is NULL --> x: " + x + " y: " + moveFrom);
+                    continue;
+                }
+                
                 grid[x, moveFrom].transform.position = GetWorldPoint(x, moveTo);
                 grid[x, moveTo] = grid[x, moveFrom];
                 grid[x, moveFrom] = null;
@@ -325,7 +343,7 @@ public class GameGrid : MonoBehaviour
 
     private GameObject GetNewFruit(int x, int y)
     {
-        Debug.Log("New Fruit for > x: " + x + " y: " + y);
+        //Debug.Log("New Fruit for > x: " + x + " y: " + y);
         List<Fruit.Type> possibleFruits = new List<Fruit.Type>();
         possibleFruits.AddRange(allFruitList);
 
@@ -359,7 +377,6 @@ public class GameGrid : MonoBehaviour
         // there are fruits which needs to be excluded
         else
         {
-            Debug.Log("get random fruit");
             return fruitList[UnityEngine.Random.Range(0, fruitList.Count)];
         }
     }
