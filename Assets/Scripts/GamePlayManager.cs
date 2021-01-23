@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GamePlayManager : MonoBehaviour
 {
@@ -15,14 +16,14 @@ public class GamePlayManager : MonoBehaviour
     private Vector3 selectedPos, lastSelectedPos;
     private bool swappingInProgress = false;
     private int gameScore = 0;
+    private bool isGameMenuOpen = false;
     
-
     // cached 
     private GameGrid gGrid;
 
     private void Start()
     {
-        gGrid = GetComponent<GameGrid>();
+        gGrid = GetComponent<GameGrid>();        
     }
 
     private void Update()
@@ -35,7 +36,7 @@ public class GamePlayManager : MonoBehaviour
 
     public void HandleFruitSelected(GameObject justClickedFruit)
     {
-        if (!swappingInProgress && !gGrid.IsShifting)
+        if (!swappingInProgress && !gGrid.IsShifting && !MenuManager.GameIsPaused)
         {
             if (justClickedFruit == selectedFruit)
             {
