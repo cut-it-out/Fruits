@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour
 {
@@ -44,5 +45,13 @@ public class MenuManager : MonoBehaviour
     public void QuitGame()
     {
         Application.Quit();
+    }
+
+    public void StartNewGame()
+    {
+        GameIsPaused = false;
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("Game");
+        GamePlayManager.Instance.ResetGame();
     }
 }

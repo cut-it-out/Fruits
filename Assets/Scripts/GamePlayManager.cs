@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class GamePlayManager : MonoBehaviour
 {
+    public static GamePlayManager Instance;
+
     [SerializeField] float swapDuration = .15f;
     [SerializeField] int gameScoreBaseValue = 100;
     [SerializeField] int gameScoreExtraValue = 50;
@@ -20,6 +22,24 @@ public class GamePlayManager : MonoBehaviour
     
     // cached 
     private GameGrid gGrid;
+
+    private void Awake()
+    {
+        MakeSingleton();
+    }
+
+    private void MakeSingleton()
+    {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+    }
 
     private void Start()
     {
@@ -128,6 +148,11 @@ public class GamePlayManager : MonoBehaviour
     public int GetGameScore()
     {
         return gameScore;
+    }
+
+    public void ResetGame()
+    {
+        Destroy(gameObject);
     }
 
 }
