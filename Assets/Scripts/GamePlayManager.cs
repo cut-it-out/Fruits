@@ -43,7 +43,7 @@ public class GamePlayManager : MonoBehaviour
 
     private void Start()
     {
-        gGrid = GetComponent<GameGrid>();        
+        gGrid = GetComponent<GameGrid>();
     }
 
     private void Update()
