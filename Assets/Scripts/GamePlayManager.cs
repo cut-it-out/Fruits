@@ -85,6 +85,7 @@ public class GamePlayManager : MonoBehaviour
                         // trigger swapping
                         swappingInProgress = true;
                         gGrid.SwapObjects(selectedFruit, lastSelectedFruit);
+                        AudioManager.Instance.SwapSound();
                     }
                     else
                     {

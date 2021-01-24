@@ -49,6 +49,7 @@ MonoBehaviour:
   gameScoreBaseValue: 100
   gameScoreExtraValue: 100
   gameScoreIncrement: 2
+  swapSound: {fileID: 8300000, guid: f433bad54fec10641a886182e04ce4c3, type: 3}
 --- !u!114 &5496918270257409047
 MonoBehaviour:
   m_ObjectHideFlags: 0

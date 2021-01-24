@@ -27,5 +27,6 @@ public class Fruit : MonoBehaviour
     public void PlayDestroyEffect()
     {
         Instantiate(destroyEffect, transform.position, Quaternion.identity);
+        AudioManager.Instance.FruitMatch();
     }
 }
