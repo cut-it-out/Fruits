@@ -298,6 +298,24 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7205393609102565978, guid: 1063d2d20d8005248ab70e37ec25d917, type: 3}
   m_PrefabInstance: {fileID: 326727246}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &357554397 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5496918270257409046, guid: 9f6ded4513b113b42bb3f59581b8e958, type: 3}
+  m_PrefabInstance: {fileID: 5496918268814654078}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &357554398
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 357554397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8d96ffbe01a469489451faa6ce41249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fruitClick: {fileID: 11400000, guid: 1661562ac27ffef4da08a4328fce3cc1, type: 2}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
