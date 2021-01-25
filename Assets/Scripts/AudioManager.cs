@@ -13,9 +13,14 @@ public class AudioManager : MonoBehaviour
     [SerializeField] AudioClip swapSound;
     [SerializeField] AudioClip fruitSound;
 
+    public bool MusicEnabled { get; private set; }
+    public bool SoundEnabled { get; private set; }
+
     private void Awake()
     {
         MakeSingleton();
+        MusicEnabled = true;
+        SoundEnabled = true;
     }
 
     private void MakeSingleton()
@@ -33,12 +38,35 @@ public class AudioManager : MonoBehaviour
 
     public void FruitMatch(float volume = 0.8f)
     {
-        fruitAudioSource.PlayOneShot(fruitSound, volume);
+        if (SoundEnabled)
+        {
+            fruitAudioSource.PlayOneShot(fruitSound, volume);
+        }
     }
 
     public void SwapSound(float volume = 0.4f)
     {
-        swapAudioSource.PlayOneShot(swapSound, volume);
+        if (SoundEnabled)
+        {
+            swapAudioSource.PlayOneShot(swapSound, volume);
+        }
     }
 
+    public void SetMusic(bool isEnabled)
+    {
+        MusicEnabled = isEnabled;
+        if (MusicEnabled)
+        {
+            musicAudioSource.Play();
+        }
+        else
+        {
+            musicAudioSource.Stop();
+        }
+    }
+
+    public void SetSound(bool isEnabled)
+    {
+        SoundEnabled = isEnabled;
+    }
 }

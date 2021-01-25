@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour
@@ -8,8 +9,16 @@ public class MenuManager : MonoBehaviour
 
     [SerializeField] GameObject pauseMenuPanel;
     [SerializeField] GameObject inGamePanel;
+    [SerializeField] Toggle musicToggle;
+    [SerializeField] Toggle soundToggle;
 
     public static bool GameIsPaused;
+
+    private void Start()
+    {
+        musicToggle.isOn = AudioManager.Instance.MusicEnabled;
+        soundToggle.isOn = AudioManager.Instance.SoundEnabled;
+    }
 
     void Update()
     {
@@ -53,5 +62,15 @@ public class MenuManager : MonoBehaviour
         Time.timeScale = 1f;
         SceneManager.LoadScene("Game");
         GamePlayManager.Instance.ResetGame();
+    }
+
+    public void SetMusic(bool isEnabled)
+    {
+        AudioManager.Instance.SetMusic(isEnabled);
+    }
+
+    public void SetSound(bool isEnabled)
+    {
+        AudioManager.Instance.SetSound(isEnabled);
     }
 }
