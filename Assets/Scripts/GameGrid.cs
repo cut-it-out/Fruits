@@ -6,12 +6,13 @@ using UnityEngine;
 
 public class GameGrid : MonoBehaviour
 {
-    [SerializeField] Vector2 gridWorldSize;
+    [SerializeField] float gridWorldSizeVertical;
     [SerializeField] float nodeRadius = 0.5f;
-    [SerializeField] Vector3 gridBottomLeftPos;
     [SerializeField] List<GameObject> fruitList;
     [SerializeField] float shiftDelay = .03f;
 
+    Vector2 gridWorldSize;
+    Vector3 gridBottomLeftPos;
     GameObject[,] grid;
     Dictionary<Fruit.Type, GameObject> fruits = new Dictionary<Fruit.Type, GameObject>();
     List<Fruit.Type> allFruitList;
@@ -28,11 +29,17 @@ public class GameGrid : MonoBehaviour
         FillUpGrid();
     }
 
-    public void Initialize()
+    private void Initialize()
     {
+        //init based on camWidth
+        gridWorldSize = new Vector2(CameraHandler.CamWidth * 2, gridWorldSizeVertical);
+
         nodeDiameter = nodeRadius * 2;
         gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
         gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
+
+        float gridWidthExtraSpace = gridWorldSize.x - (gridSizeX * nodeDiameter);
+        gridBottomLeftPos = new Vector3(gridWidthExtraSpace / 2, gridWidthExtraSpace / 2, 0f);
 
         // init grid
         grid = new GameObject[gridSizeX, gridSizeY];

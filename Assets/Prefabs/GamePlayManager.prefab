@@ -49,7 +49,6 @@ MonoBehaviour:
   gameScoreBaseValue: 100
   gameScoreExtraValue: 100
   gameScoreIncrement: 2
-  swapSound: {fileID: 8300000, guid: f433bad54fec10641a886182e04ce4c3, type: 3}
 --- !u!114 &5496918270257409047
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62,9 +61,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46f3e04aa79ccb743b3387d4e5e95e0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridWorldSize: {x: 5.25, y: 8}
+  gridWorldSizeVertical: 7
   nodeRadius: 0.471
-  gridBottomLeftPos: {x: 0, y: 0, z: 0}
   fruitList:
   - {fileID: 1316993835625522635, guid: 525593b4d0178134aba255c2f08a525f, type: 3}
   - {fileID: 1898033418578161078, guid: f3a9fe29b678cea439311883ffe6f992, type: 3}
