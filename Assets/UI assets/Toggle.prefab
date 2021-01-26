@@ -110,8 +110,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 44.199997, y: -7}
-  m_SizeDelta: {x: -91.203, y: 40.361}
+  m_AnchoredPosition: {x: 45, y: -6.499999}
+  m_SizeDelta: {x: -90, y: 47}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5955030012842599848
 CanvasRenderer:
@@ -166,7 +166,7 @@ GameObject:
   - component: {fileID: 891269186164889191}
   - component: {fileID: 8216812830533882025}
   m_Layer: 5
-  m_Name: MusicToggle
+  m_Name: Toggle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
