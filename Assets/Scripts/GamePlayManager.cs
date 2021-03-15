@@ -13,6 +13,8 @@ public class GamePlayManager : MonoBehaviour
     [SerializeField] int gameScoreExtraValue = 50;
     [SerializeField] int gameScoreIncrement = 2;
 
+    public GameObject scorePopupGameObject;
+
     // variables
     private GameObject selectedFruit, lastSelectedFruit;
     private Vector3 selectedPos, lastSelectedPos;
@@ -135,15 +137,19 @@ public class GamePlayManager : MonoBehaviour
         go.transform.Find("Selection").gameObject.SetActive(isActive);
     }
 
-    public void UpdateGameScore(int matchCount)
+    public int UpdateGameScore(int matchCount)
     {
-        gameScore += matchCount * gameScoreBaseValue;
+        int score;
+        score = matchCount * gameScoreBaseValue;
 
         if (matchCount > 3)
         {
-            gameScore +=  (((matchCount - 3) / gameScoreIncrement) + 1) * ((matchCount - 3) * gameScoreExtraValue);
+            score +=  (((matchCount - 3) / gameScoreIncrement) + 1) * ((matchCount - 3) * gameScoreExtraValue);
         }
-        
+
+        gameScore += score;
+
+        return score;
     }
 
     public int GetGameScore()

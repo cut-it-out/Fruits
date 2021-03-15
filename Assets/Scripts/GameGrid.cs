@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using TMPro;
 
 public class GameGrid : MonoBehaviour
 {
@@ -236,7 +237,12 @@ public class GameGrid : MonoBehaviour
 
         if (matchingFruits.Count >= 2)
         {
-            GamePlayManager.Instance.UpdateGameScore(matchingFruits.Count + 1);
+            // update score
+            int score = GamePlayManager.Instance.UpdateGameScore(matchingFruits.Count + 1);
+
+            // instantiate text to show score received for match
+            GameObject scorePopup = Instantiate(GamePlayManager.Instance.scorePopupGameObject, matchingFruits[1].transform.position, Quaternion.identity);
+            scorePopup.GetComponentInChildren<TMP_Text>().text = score.ToString();
 
             for (int i = 0; i < matchingFruits.Count; i++)
             {

@@ -1722,6 +1722,10 @@ PrefabInstance:
       propertyPath: swapDuration
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 5496918270257409044, guid: 9f6ded4513b113b42bb3f59581b8e958, type: 3}
+      propertyPath: scorePopupGameObject
+      value: 
+      objectReference: {fileID: 906234258496079935, guid: 94680f495d249ad47a8a46b0e960d514, type: 3}
     - target: {fileID: 5496918270257409045, guid: 9f6ded4513b113b42bb3f59581b8e958, type: 3}
       propertyPath: m_RootOrder
       value: 1
