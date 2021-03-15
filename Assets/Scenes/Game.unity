@@ -1771,6 +1771,10 @@ PrefabInstance:
       value: GamePlayManager
       objectReference: {fileID: 0}
     - target: {fileID: 5496918270257409047, guid: 9f6ded4513b113b42bb3f59581b8e958, type: 3}
+      propertyPath: nodeRadius
+      value: 0.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 5496918270257409047, guid: 9f6ded4513b113b42bb3f59581b8e958, type: 3}
       propertyPath: gridWorldSize.y
       value: 7
       objectReference: {fileID: 0}
